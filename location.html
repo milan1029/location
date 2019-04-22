@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+     <link href="css/style.css" rel="stylesheet">
+    <title>Location</title>
+  </head>
+  <body>
+
+    <h1>A super-simple geolocatio&#8203;n</h1>
+    <i class="fa fa-map-marker"></i>
+    <button class="pure-button pure-button-primary">Get my location</button>
+    <div class="result"></div>
+
+     <form>
+        Longitude:<br>
+        <input type="text" id="longitude" value="">
+        <br>
+        Latitude:<br>
+        <input type="text"  id="latitude" value="">
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+   
+ 
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+<script>
+ /** NOTE: uses jQuery for quick & easy DOM manipulation **/
+
+function getLocation(){
+  var msg; 
+
+  /** 
+  first, test for feature support
+  **/
+  if('geolocation' in navigator){
+    // geolocation is supported :)
+    requestLocation();
+  }else{
+    // no geolocation :(
+    msg = "Sorry, looks like your browser doesn't support geolocation";
+    outputResult(msg); // output error message
+    $('.pure-button').removeClass('pure-button-primary').addClass('pure-button-success'); // change button style
+  }
+
+  /*** 
+  requestLocation() returns a message, either the users coordinates, or an error message
+  **/
+  function requestLocation(){
+    /**
+    getCurrentPosition() below accepts 3 arguments:
+    a success callback (required), an error callback  (optional), and a set of options (optional)
+    **/
+  
+    var options = {
+      // enableHighAccuracy = should the device take extra time or power to return a really accurate result, or should it give you the quick (but less accurate) answer?
+      enableHighAccuracy: false,
+      // timeout = how long does the device have, in milliseconds to return a result?
+      timeout: 5000,
+      // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
+      maximumAge: 0
+    };
+  
+    // call getCurrentPosition()
+    navigator.geolocation.getCurrentPosition(success, error, options); 
+  
+    // upon success, do this
+    function success(pos){
+      // get longitude and latitude from the position object passed in
+      var lng = pos.coords.longitude;
+      var lat = pos.coords.latitude;
+      // and presto, we have the device's location!
+           var url = "https://maps.google.com/?q=" + lat + "," + lng;
+           window.open(url);
+           
+      outputResult(lng, lat); // output message
+    
+    }
+  
+    // upon error, do this
+    function error(err){
+      // return the error message
+      msg = 'Error: ' + err + ' :(';
+      $('.result').addClass('result').html(msg);
+    }  
+  } // end requestLocation();
+
+  /*** 
+  outputResult() inserts msg into the DOM  
+  **/
+  function outputResult(longitude, latitude){
+    $("#longitude").val(longitude);
+    $("#latitude").val(latitude);
+  }
+} // end getLocation()
+
+// attach getLocation() to button click
+$('.pure-button').click(function(){
+  // show spinner while getlocation() does its thing
+  getLocation();
+});
+
+  </script>
+  </body>
+</html>
